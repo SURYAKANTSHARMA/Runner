@@ -1,6 +1,8 @@
 
 import UIKit
 import GoogleMaps
+import CoreLocation
+
 typealias JSON = [String: Any]
 typealias JSONArray = [JSON]
 
@@ -33,10 +35,16 @@ class RunDetailsViewController: UIViewController {
       let location = location as! Location
       return location.latitude
     }
-    
+
     let longitudes = locations.map { location -> Double in
       let location = location as! Location
       return location.longitude
+    }
+    
+    
+    let _locations = locations.map { location -> CLLocation in
+      let location = location as! Location
+      return CLLocation(latitude: location.latitude, longitude: location.longitude)
     }
     
     let maxLat = latitudes.max()!
@@ -44,8 +52,23 @@ class RunDetailsViewController: UIViewController {
     let maxLong = longitudes.max()!
     let minLong = longitudes.min()!
     
-    //mapView.drawPathCoordinates(CLLocation(latitude: minLat, longitude: minLong), endLocation: CLLocation(latitude: maxLat, longitude: maxLong))
-    getPolylineRoute(from: CLLocationCoordinate2D(latitude: minLat, longitude: minLong), to: CLLocationCoordinate2D(latitude: maxLat, longitude: maxLong))
+     let bounds = GMSCoordinateBounds(coordinate: CLLocationCoordinate2D(latitude: minLat, longitude: minLong), coordinate: CLLocationCoordinate2D(latitude: maxLat, longitude: maxLong))
+     mapView.animate(with: GMSCameraUpdate.fit(bounds, withPadding: kPadding))
+     mapView.animate(toViewingAngle: 30)
+     let path = GMSMutablePath()
+     for location in _locations {
+      path.addLatitude(location.coordinate.latitude, longitude: location.coordinate.longitude)
+     }
+    
+    
+    let polyLine = GMSPolyline()
+    polyLine.path = path
+    polyLine.strokeWidth = 2.0
+    let redYellow =
+      GMSStrokeStyle.gradient(from: .red, to: .yellow)
+    polyLine.spans = [GMSStyleSpan(style: redYellow)]
+    polyLine.map = mapView
+  
   }
   
   private func configureView() {
@@ -62,38 +85,6 @@ class RunDetailsViewController: UIViewController {
     dateLabel.text = formattedDate
     timeLabel.text = "Time:  \(formattedTime)"
     paceLabel.text = "Pace:  \(formattedPace)"
-  }
-  
-  func getPolylineRoute(from source: CLLocationCoordinate2D, to destination: CLLocationCoordinate2D) {
-    
-    let config = URLSessionConfiguration.default
-    let session = URLSession(configuration: config)
-    
-    let url = URL(string: "https://maps.googleapis.com/maps/api/directions/json?origin=\(source.latitude),\(source.longitude)&destination=\(destination.latitude),\(destination.longitude)&sensor=false&mode=walking&key=AIzaSyCvk3KZS7-hPjiwLrUnhgloF5DoZpPB08k")!
-    print(url)
-    let task = session.dataTask(with: url, completionHandler: {
-      (data, response, error) in
-      if error != nil {
-          print(error!.localizedDescription)
-      } else {
-        do {
-          if let json : [String:Any] = try JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? [String: Any] {
-            print(json)
-            if let routes = json["routes"] as? JSONArray,
-              let overViewPolyLine = routes[0]["overview_polyline"] as? JSON,
-              let point = overViewPolyLine["points"] as? String {
-              DispatchQueue.main.async {
-                self.mapView.drawPath(point)
-              }
-            }
-           }
-          
-        }catch{
-          print("error in JSONSerialization")
-        }
-      }
-    })
-    task.resume()
   }
 }
 
