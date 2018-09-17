@@ -53,7 +53,7 @@ class RunDetailsViewController: UIViewController {
     let minLong = longitudes.min()!
     
      let bounds = GMSCoordinateBounds(coordinate: CLLocationCoordinate2D(latitude: minLat, longitude: minLong), coordinate: CLLocationCoordinate2D(latitude: maxLat, longitude: maxLong))
-     mapView.animate(with: GMSCameraUpdate.fit(bounds, withPadding: kPadding))
+     mapView.animate(with: GMSCameraUpdate.fit(bounds, withPadding: 50))
      mapView.animate(toViewingAngle: 30)
      let path = GMSMutablePath()
      for location in _locations {

@@ -20,6 +20,25 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>yourdomain.com</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+				<false/>
+			</dict>
+		</dict>
+	</dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Runner needs access to your location in order to record and track your run!</string>
+	<key>Privacy – Location When In Use Usage Description </key>
+	<string>Runner needs access to your location in order to record and track your run!</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
@@ -36,24 +55,5 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-	<key>Privacy – Location When In Use Usage Description </key>
-	<string>Runner needs access to your location in order to record and track your run!</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Runner needs access to your location in order to record and track your run!</string>
-  <key>NSAppTransportSecurity</key>
-  <dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
-    <key>NSExceptionDomains</key>
-    <dict>
-      <key>yourdomain.com</key>
-      <dict>
-        <key>NSIncludesSubdomains</key>
-        <true/>
-        <key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
-        <false/>
-      </dict>
-    </dict>
-  </dict>
 </dict>
 </plist>
